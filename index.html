@@ -704,7 +704,7 @@
       </div>
       <div class="card">
         <div class="card-title"><span class="card-title-icon">📥</span>Importer des données</div>
-        <p style="font-size:13px;color:var(--txt2);margin-bottom:12px">Restaurez un fichier JSON exporté précédemment depuis cet outil.</p>
+        <p style="font-size:13px;color:var(--txt2);margin-bottom:12px">Fusionne un fichier JSON exporté avec vos données existantes (les doublons de candidatures sont ignorés).</p>
         <input type="file" id="import-file" accept=".json"
                style="font-size:13px;color:var(--txt2);margin-bottom:10px;display:block">
         <button class="btn btn-ghost" onclick="importJSON()">↑ Importer le fichier JSON</button>
@@ -876,7 +876,6 @@ function renderCandidatures() {
       `<option value="${k}"${c.statut === k ? ' selected' : ''}>${v}</option>`
     ).join('');
     const css = STATUT_CSS[c.statut] || '';
-    // inline style for select to match badge look
     const col = {
       candidature: '#2b72c8', relance: '#7c4db5', entretien: '#16a06a',
       offre: '#c47f0a', refus: '#c0392b', archive: '#9aa0b8'
@@ -1166,10 +1165,27 @@ function importJSON() {
   const reader = new FileReader();
   reader.onload = e => {
     try {
-      db = JSON.parse(e.target.result);
+      const imported = JSON.parse(e.target.result);
+      const ids = new Set(
+        db.candidatures.map(c => c.id)
+      );
+      (imported.candidatures || []).forEach(c => {
+        if (!ids.has(c.id)) {
+          db.candidatures.push(c);
+        }
+      });
+      (imported.relances || []).forEach(r => {
+        db.relances.push(r);
+      });
+      (imported.entretiens || []).forEach(ent => {
+        db.entretiens.push(ent);
+      });
       persist();
       renderDashboard();
-      toast('✓ Import réussi');
+      renderCandidatures();
+      renderRelances();
+      renderEntretiens();
+      toast('✓ Données ajoutées');
     } catch(err) {
       toast('Fichier JSON invalide', 'err');
     }
