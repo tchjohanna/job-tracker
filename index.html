@@ -4,479 +4,176 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Job Tracker — Johanna</title>
-  <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#d63b55" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Job Tracker" />
-  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png" />
-
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@700&display=swap" rel="stylesheet" />
   <style>
-    /* ── RESET & TOKENS ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg:        #f4f6fb;
-      --bg2:       #ffffff;
-      --bg3:       #eef1f8;
-      --border:    rgba(0,0,0,0.08);
-      --border2:   rgba(0,0,0,0.16);
-      --txt:       #1a1e2e;
-      --txt2:      #5a6380;
-      --txt3:      #9aa0b8;
-      --acc:       #d63b55;
-      --acc-dim:   rgba(214,59,85,0.10);
-      --blue:      #2b72c8;
-      --blue-dim:  rgba(43,114,200,0.10);
-      --purple:    #7c4db5;
-      --purple-dim:rgba(124,77,181,0.10);
-      --green:     #16a06a;
-      --green-dim: rgba(22,160,106,0.10);
-      --amber:     #c47f0a;
-      --amber-dim: rgba(196,127,10,0.10);
-      --red:       #c0392b;
-      --red-dim:   rgba(192,57,43,0.10);
-      --gray-dim:  rgba(0,0,0,0.04);
-      --radius:    10px;
-      --radius-lg: 14px;
-      --shadow:    0 2px 16px rgba(0,0,0,0.10);
+      --bg:#f4f6fb; --bg2:#ffffff; --bg3:#eef1f8;
+      --border:rgba(0,0,0,0.08); --border2:rgba(0,0,0,0.16);
+      --txt:#1a1e2e; --txt2:#5a6380; --txt3:#9aa0b8;
+      --acc:#d63b55; --acc-dim:rgba(214,59,85,0.10);
+      --blue:#2b72c8; --blue-dim:rgba(43,114,200,0.10);
+      --purple:#7c4db5; --purple-dim:rgba(124,77,181,0.10);
+      --green:#16a06a; --green-dim:rgba(22,160,106,0.10);
+      --amber:#c47f0a; --amber-dim:rgba(196,127,10,0.10);
+      --red:#c0392b; --red-dim:rgba(192,57,43,0.10);
+      --gray-dim:rgba(0,0,0,0.04);
+      --radius:10px; --radius-lg:14px;
+      --shadow:0 2px 16px rgba(0,0,0,0.10);
     }
-
     html { scroll-behavior: smooth; }
-    body {
-      background: var(--bg);
-      color: var(--txt);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      line-height: 1.6;
-      min-height: 100vh;
-    }
-
-    /* ── BACKGROUND GRID ── */
+    body { background:var(--bg); color:var(--txt); font-family:'DM Sans',sans-serif; font-size:14px; line-height:1.6; min-height:100vh; }
     body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-      z-index: 0;
+      content:''; position:fixed; inset:0;
+      background-image: linear-gradient(rgba(0,0,0,0.04) 1px,transparent 1px), linear-gradient(90deg,rgba(0,0,0,0.04) 1px,transparent 1px);
+      background-size:40px 40px; pointer-events:none; z-index:0;
     }
+    .app { position:relative; z-index:1; display:flex; flex-direction:column; min-height:100vh; }
 
-    /* ── LAYOUT ── */
-    .app { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100vh; }
-
-    /* ── HEADER ── */
-    .header {
-      background: var(--bg2);
-      border-bottom: 1px solid var(--border);
-      padding: 0 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 62px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(12px);
-    }
-    .header-brand { display: flex; align-items: center; gap: 12px; }
-    .brand-icon {
-      width: 38px; height: 38px;
-      background: var(--acc);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
-      box-shadow: 0 2px 10px rgba(214,59,85,0.25);
-    }
-    .brand-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 17px;
-      letter-spacing: -.3px;
-    }
-    .brand-sub { font-size: 11px; color: var(--txt2); margin-top: -2px; }
-    .header-stats { display: flex; gap: 20px; }
-    .hs { text-align: center; }
-    .hs-num { font-family: 'Syne', sans-serif; font-size: 18px; color: var(--acc); line-height: 1; }
-    .hs-lbl { font-size: 10px; color: var(--txt3); text-transform: uppercase; letter-spacing: .5px; }
-
-    /* ── NAV ── */
-    .nav {
-      background: var(--bg2);
-      border-bottom: 1px solid var(--border);
-      padding: 0 24px;
-      display: flex;
-      gap: 2px;
-      overflow-x: auto;
-    }
-    .nav::-webkit-scrollbar { display: none; }
-    .nav-btn {
-      padding: 13px 18px;
-      background: none;
-      border: none;
-      color: var(--txt2);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      white-space: nowrap;
-      position: relative;
-      transition: color .2s;
-    }
-    .nav-btn::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 18px; right: 18px;
-      height: 2px;
-      background: var(--acc);
-      border-radius: 2px 2px 0 0;
-      transform: scaleX(0);
-      transition: transform .2s;
-    }
-    .nav-btn:hover { color: var(--txt); }
-    .nav-btn.active { color: var(--txt); }
-    .nav-btn.active::after { transform: scaleX(1); }
-    .nav-icon { margin-right: 6px; }
-
-    /* ── MAIN ── */
-    .main { padding: 24px; max-width: 1140px; width: 100%; margin: 0 auto; flex: 1; }
-
-    /* ── SECTIONS ── */
-    .section { display: none; }
-    .section.active { display: block; animation: fadeIn .2s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* ── CARDS ── */
-    .card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      margin-bottom: 16px;
-    }
-    .card-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--txt2);
-      text-transform: uppercase;
-      letter-spacing: .6px;
-      margin-bottom: 16px;
+    /* SYNC BANNER */
+    #sync-banner {
+      background: var(--green-dim);
+      border-bottom: 1px solid rgba(22,160,106,0.2);
+      padding: 6px 24px;
+      font-size: 12px;
+      color: var(--green);
       display: flex;
       align-items: center;
       gap: 8px;
-    }
-    .card-title-icon { font-size: 16px; }
-
-    /* ── STAT GRID ── */
-    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 16px; }
-    .stat-tile {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px 14px;
-      text-align: center;
-      transition: border-color .2s;
-    }
-    .stat-tile:hover { border-color: var(--border2); }
-    .stat-tile-num { font-family: 'Syne', sans-serif; font-size: 30px; line-height: 1; }
-    .stat-tile-lbl { font-size: 11px; color: var(--txt2); margin-top: 4px; }
-    .st-acc  .stat-tile-num { color: var(--acc); }
-    .st-blue .stat-tile-num { color: var(--blue); }
-    .st-grn  .stat-tile-num { color: var(--green); }
-    .st-amb  .stat-tile-num { color: var(--amber); }
-    .st-pur  .stat-tile-num { color: var(--purple); }
-
-    /* ── FORM ── */
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 14px; }
-    .form-full { grid-column: 1 / -1; }
-    .field { display: flex; flex-direction: column; gap: 5px; }
-    .field label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--txt2);
-      text-transform: uppercase;
-      letter-spacing: .5px;
-    }
-    input, select, textarea {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--txt);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      padding: 9px 12px;
-      transition: border-color .2s, background .2s;
-      width: 100%;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--acc);
-      background: var(--bg2);
-    }
-    select option { background: var(--bg2); color: var(--txt); }
-    textarea { resize: vertical; min-height: 70px; }
-
-    /* ── BUTTONS ── */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 9px 18px;
-      border-radius: var(--radius);
-      border: none;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
       font-weight: 500;
-      cursor: pointer;
-      transition: all .15s;
     }
-    .btn:active { transform: scale(.97); }
-    .btn-primary { background: var(--acc); color: #fff; box-shadow: 0 2px 8px rgba(214,59,85,0.25); }
-    .btn-primary:hover { background: #b5304a; box-shadow: 0 4px 14px rgba(214,59,85,0.35); }
-    .btn-ghost {
-      background: var(--gray-dim);
-      color: var(--txt2);
-      border: 1px solid var(--border);
-    }
-    .btn-ghost:hover { background: rgba(255,255,255,0.1); color: var(--txt); }
-    .btn-danger { background: var(--red-dim); color: var(--red); border: 1px solid rgba(248,113,113,0.2); }
-    .btn-danger:hover { background: rgba(248,113,113,0.25); }
-    .btn-sm { padding: 5px 11px; font-size: 12px; }
-    .btn-icon {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--txt3);
-      padding: 5px 7px;
-      border-radius: 6px;
-      font-size: 15px;
-      transition: all .15s;
-      line-height: 1;
-    }
-    .btn-icon:hover { color: var(--txt); background: rgba(255,255,255,0.08); }
+    #sync-banner.error { background: var(--red-dim); color: var(--red); border-color: rgba(192,57,43,0.2); }
+    #sync-banner.loading { background: var(--blue-dim); color: var(--blue); border-color: rgba(43,114,200,0.2); }
 
-    /* ── TABLE ── */
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; }
-    th {
-      padding: 9px 12px;
-      text-align: left;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--txt3);
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      border-bottom: 1px solid var(--border);
-      white-space: nowrap;
-    }
-    td {
-      padding: 10px 12px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      font-size: 13px;
-      vertical-align: middle;
-    }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: rgba(255,255,255,0.025); }
+    .header { background:var(--bg2); border-bottom:1px solid var(--border); padding:0 24px; display:flex; align-items:center; justify-content:space-between; height:62px; position:sticky; top:0; z-index:100; backdrop-filter:blur(12px); }
+    .header-brand { display:flex; align-items:center; gap:12px; }
+    .brand-icon { width:38px; height:38px; background:var(--acc); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; box-shadow:0 2px 10px rgba(214,59,85,0.25); }
+    .brand-title { font-family:'Syne',sans-serif; font-size:17px; letter-spacing:-.3px; }
+    .brand-sub { font-size:11px; color:var(--txt2); margin-top:-2px; }
+    .header-stats { display:flex; gap:20px; }
+    .hs { text-align:center; }
+    .hs-num { font-family:'Syne',sans-serif; font-size:18px; color:var(--acc); line-height:1; }
+    .hs-lbl { font-size:10px; color:var(--txt3); text-transform:uppercase; letter-spacing:.5px; }
 
-    /* ── BADGES ── */
-    .badge {
-      display: inline-block;
-      padding: 3px 9px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    .b-candidature { background: var(--blue-dim); color: var(--blue); }
-    .b-relance     { background: var(--purple-dim); color: var(--purple); }
-    .b-entretien   { background: var(--green-dim); color: var(--green); }
-    .b-offre       { background: var(--amber-dim); color: var(--amber); }
-    .b-refus       { background: var(--red-dim); color: var(--red); }
-    .b-archive     { background: var(--gray-dim); color: var(--txt2); }
+    .nav { background:var(--bg2); border-bottom:1px solid var(--border); padding:0 24px; display:flex; gap:2px; overflow-x:auto; }
+    .nav::-webkit-scrollbar { display:none; }
+    .nav-btn { padding:13px 18px; background:none; border:none; color:var(--txt2); font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; cursor:pointer; white-space:nowrap; position:relative; transition:color .2s; }
+    .nav-btn::after { content:''; position:absolute; bottom:0; left:18px; right:18px; height:2px; background:var(--acc); border-radius:2px 2px 0 0; transform:scaleX(0); transition:transform .2s; }
+    .nav-btn:hover { color:var(--txt); }
+    .nav-btn.active { color:var(--txt); }
+    .nav-btn.active::after { transform:scaleX(1); }
+    .nav-icon { margin-right:6px; }
 
-    /* statut inline select */
-    .statut-select {
-      background: none;
-      border: none;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-      padding: 3px 9px;
-      border-radius: 20px;
-      width: auto;
-    }
+    .main { padding:24px; max-width:1140px; width:100%; margin:0 auto; flex:1; }
+    .section { display:none; }
+    .section.active { display:block; animation:fadeIn .2s ease; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 
-    /* ── TOOLBAR ── */
-    .toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
-    }
-    .toolbar-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .search {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--txt);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      padding: 8px 12px 8px 34px;
-      width: 210px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%238890aa' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.099zm-5.242 1.15a5 5 0 1 1 0-10 5 5 0 0 1 0 10'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: 10px center;
-      transition: border-color .2s;
-    }
-    .search:focus { outline: none; border-color: var(--acc); }
-    .filter-sel {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--txt2);
-      font-size: 12px;
-      padding: 8px 10px;
-    }
-    .count-badge {
-      font-size: 12px;
-      color: var(--txt3);
-      background: var(--bg3);
-      padding: 4px 10px;
-      border-radius: 20px;
-      border: 1px solid var(--border);
-    }
+    .card { background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px; margin-bottom:16px; }
+    .card-title { font-size:13px; font-weight:600; color:var(--txt2); text-transform:uppercase; letter-spacing:.6px; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
 
-    /* ── EMPTY ── */
-    .empty {
-      text-align: center;
-      padding: 50px 20px;
-      color: var(--txt3);
-    }
-    .empty-emoji { font-size: 44px; margin-bottom: 10px; }
-    .empty-txt { font-size: 13px; }
+    .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:12px; margin-bottom:16px; }
+    .stat-tile { background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius); padding:16px 14px; text-align:center; transition:border-color .2s; }
+    .stat-tile:hover { border-color:var(--border2); }
+    .stat-tile-num { font-family:'Syne',sans-serif; font-size:30px; line-height:1; }
+    .stat-tile-lbl { font-size:11px; color:var(--txt2); margin-top:4px; }
+    .st-acc .stat-tile-num{color:var(--acc)} .st-blue .stat-tile-num{color:var(--blue)}
+    .st-grn .stat-tile-num{color:var(--green)} .st-amb .stat-tile-num{color:var(--amber)}
+    .st-pur .stat-tile-num{color:var(--purple)}
 
-    /* ── CHART BAR ── */
-    .chart-rows { display: flex; flex-direction: column; gap: 10px; }
-    .chart-row { display: flex; align-items: center; gap: 10px; }
-    .chart-lbl { width: 100px; text-align: right; font-size: 12px; color: var(--txt2); flex-shrink: 0; }
-    .chart-track {
-      flex: 1;
-      height: 22px;
-      background: var(--bg3);
-      border-radius: 6px;
-      overflow: hidden;
-    }
-    .chart-fill {
-      height: 100%;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      padding-left: 8px;
-      font-size: 11px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.9);
-      transition: width .5s cubic-bezier(.4,0,.2,1);
-      min-width: 0;
-    }
+    .form-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-bottom:14px; }
+    .form-full { grid-column:1/-1; }
+    .field { display:flex; flex-direction:column; gap:5px; }
+    .field label { font-size:11px; font-weight:600; color:var(--txt2); text-transform:uppercase; letter-spacing:.5px; }
+    input,select,textarea { background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); color:var(--txt); font-family:'DM Sans',sans-serif; font-size:13px; padding:9px 12px; transition:border-color .2s,background .2s; width:100%; }
+    input:focus,select:focus,textarea:focus { outline:none; border-color:var(--acc); background:var(--bg2); }
+    select option { background:var(--bg2); color:var(--txt); }
+    textarea { resize:vertical; min-height:70px; }
 
-    /* ── TIMELINE ── */
-    .timeline { display: flex; flex-direction: column; gap: 12px; }
-    .tl-item { display: flex; gap: 12px; align-items: flex-start; }
-    .tl-dot {
-      width: 30px; height: 30px;
-      border-radius: 50%;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px;
-      flex-shrink: 0;
-    }
-    .tl-body { flex: 1; }
-    .tl-text { font-size: 13px; }
-    .tl-date { font-size: 11px; color: var(--txt3); margin-top: 2px; }
+    .btn { display:inline-flex; align-items:center; gap:7px; padding:9px 18px; border-radius:var(--radius); border:none; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; cursor:pointer; transition:all .15s; }
+    .btn:active { transform:scale(.97); }
+    .btn-primary { background:var(--acc); color:#fff; box-shadow:0 2px 8px rgba(214,59,85,0.25); }
+    .btn-primary:hover { background:#b5304a; }
+    .btn-ghost { background:var(--gray-dim); color:var(--txt2); border:1px solid var(--border); }
+    .btn-ghost:hover { color:var(--txt); }
+    .btn-danger { background:var(--red-dim); color:var(--red); border:1px solid rgba(248,113,113,0.2); }
+    .btn-danger:hover { background:rgba(248,113,113,0.25); }
+    .btn-sm { padding:5px 11px; font-size:12px; }
+    .btn-icon { background:none; border:none; cursor:pointer; color:var(--txt3); padding:5px 7px; border-radius:6px; font-size:15px; transition:all .15s; line-height:1; }
+    .btn-icon:hover { color:var(--txt); }
 
-    /* ── ALERT ── */
-    .alert-row {
-      background: rgba(251,191,36,0.1);
-      border: 1px solid rgba(251,191,36,0.25);
-      border-radius: var(--radius);
-      padding: 10px 14px;
-      margin-bottom: 8px;
-      font-size: 13px;
-      color: var(--amber);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; }
+    th { padding:9px 12px; text-align:left; font-size:11px; font-weight:600; color:var(--txt3); text-transform:uppercase; letter-spacing:.5px; border-bottom:1px solid var(--border); white-space:nowrap; }
+    td { padding:10px 12px; border-bottom:1px solid rgba(0,0,0,0.03); font-size:13px; vertical-align:middle; }
+    tr:last-child td { border-bottom:none; }
 
-    /* ── EXPORT TILES ── */
-    .export-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .export-tile {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 28px 20px;
-      text-align: center;
-      transition: border-color .2s;
-    }
-    .export-tile:hover { border-color: var(--border2); }
-    .export-icon { font-size: 40px; margin-bottom: 10px; }
-    .export-title { font-family: 'Syne', sans-serif; font-size: 16px; margin-bottom: 6px; }
-    .export-desc { font-size: 12px; color: var(--txt2); margin-bottom: 16px; line-height: 1.5; }
+    .badge { display:inline-block; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap; }
+    .b-candidature{background:var(--blue-dim);color:var(--blue)}
+    .b-relance{background:var(--purple-dim);color:var(--purple)}
+    .b-entretien{background:var(--green-dim);color:var(--green)}
+    .b-offre{background:var(--amber-dim);color:var(--amber)}
+    .b-refus{background:var(--red-dim);color:var(--red)}
+    .b-archive{background:var(--gray-dim);color:var(--txt2)}
 
-    /* ── DASHBOARD GRID ── */
-    .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .statut-select { background:none; border:none; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; cursor:pointer; padding:3px 9px; border-radius:20px; width:auto; }
 
-    /* ── TOAST ── */
-    #toast {
-      position: fixed;
-      bottom: 24px; right: 24px;
-      background: var(--bg2);
-      border: 1px solid var(--border2);
-      border-left: 3px solid var(--green);
-      color: var(--txt);
-      padding: 12px 18px;
-      border-radius: var(--radius);
-      font-size: 13px;
-      font-weight: 500;
-      box-shadow: var(--shadow);
-      z-index: 999;
-      transform: translateY(80px);
-      opacity: 0;
-      transition: all .25s cubic-bezier(.4,0,.2,1);
-      max-width: 280px;
-    }
-    #toast.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
-    #toast.error { border-left-color: var(--acc); }
+    .toolbar { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+    .toolbar-left { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .search { background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); color:var(--txt); font-family:'DM Sans',sans-serif; font-size:13px; padding:8px 12px 8px 34px; width:210px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%238890aa' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.099zm-5.242 1.15a5 5 0 1 1 0-10 5 5 0 0 1 0 10'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:10px center; }
+    .search:focus { outline:none; border-color:var(--acc); }
+    .filter-sel { background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); color:var(--txt2); font-size:12px; padding:8px 10px; }
+    .count-badge { font-size:12px; color:var(--txt3); background:var(--bg3); padding:4px 10px; border-radius:20px; border:1px solid var(--border); }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 700px) {
-      .header-stats { display: none; }
-      .dash-grid { grid-template-columns: 1fr; }
-      .export-grid { grid-template-columns: 1fr; }
-      .main { padding: 14px; }
+    .empty { text-align:center; padding:50px 20px; color:var(--txt3); }
+    .empty-emoji { font-size:44px; margin-bottom:10px; }
+    .empty-txt { font-size:13px; }
+
+    .chart-rows { display:flex; flex-direction:column; gap:10px; }
+    .chart-row { display:flex; align-items:center; gap:10px; }
+    .chart-lbl { width:100px; text-align:right; font-size:12px; color:var(--txt2); flex-shrink:0; }
+    .chart-track { flex:1; height:22px; background:var(--bg3); border-radius:6px; overflow:hidden; }
+    .chart-fill { height:100%; border-radius:6px; display:flex; align-items:center; padding-left:8px; font-size:11px; font-weight:600; color:rgba(255,255,255,0.9); transition:width .5s cubic-bezier(.4,0,.2,1); }
+
+    .timeline { display:flex; flex-direction:column; gap:12px; }
+    .tl-item { display:flex; gap:12px; align-items:flex-start; }
+    .tl-dot { width:30px; height:30px; border-radius:50%; background:var(--bg3); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+    .tl-body { flex:1; }
+    .tl-text { font-size:13px; }
+    .tl-date { font-size:11px; color:var(--txt3); margin-top:2px; }
+
+    .alert-row { background:rgba(251,191,36,0.1); border:1px solid rgba(251,191,36,0.25); border-radius:var(--radius); padding:10px 14px; margin-bottom:8px; font-size:13px; color:var(--amber); display:flex; align-items:center; gap:8px; }
+
+    .export-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .export-tile { background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius-lg); padding:28px 20px; text-align:center; }
+    .export-icon { font-size:40px; margin-bottom:10px; }
+    .export-title { font-family:'Syne',sans-serif; font-size:16px; margin-bottom:6px; }
+    .export-desc { font-size:12px; color:var(--txt2); margin-bottom:16px; line-height:1.5; }
+
+    .dash-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+
+    #toast { position:fixed; bottom:24px; right:24px; background:var(--bg2); border:1px solid var(--border2); border-left:3px solid var(--green); color:var(--txt); padding:12px 18px; border-radius:var(--radius); font-size:13px; font-weight:500; box-shadow:var(--shadow); z-index:999; transform:translateY(80px); opacity:0; transition:all .25s cubic-bezier(.4,0,.2,1); max-width:280px; }
+    #toast.show { transform:translateY(0); opacity:1; }
+    #toast.error { border-left-color:var(--acc); }
+
+    @media (max-width:700px) {
+      .header-stats{display:none} .dash-grid{grid-template-columns:1fr}
+      .export-grid{grid-template-columns:1fr} .main{padding:14px}
     }
   </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- HEADER -->
+  <!-- SYNC BANNER -->
+  <div id="sync-banner" class="loading">⏳ Connexion à Firebase...</div>
+
   <header class="header">
     <div class="header-brand">
       <div class="brand-icon">💼</div>
@@ -488,51 +185,39 @@
     <div class="header-stats" id="header-stats"></div>
   </header>
 
-  <!-- NAV -->
   <nav class="nav">
-    <button class="nav-btn active" data-tab="dashboard">
-      <span class="nav-icon">📊</span>Dashboard
-    </button>
-    <button class="nav-btn" data-tab="candidatures">
-      <span class="nav-icon">📋</span>Candidatures
-    </button>
-    <button class="nav-btn" data-tab="relances">
-      <span class="nav-icon">🔔</span>Relances
-    </button>
-    <button class="nav-btn" data-tab="entretiens">
-      <span class="nav-icon">🎯</span>Entretiens
-    </button>
-    <button class="nav-btn" data-tab="export">
-      <span class="nav-icon">📤</span>Export / Import
-    </button>
+    <button class="nav-btn active" data-tab="dashboard"><span class="nav-icon">📊</span>Dashboard</button>
+    <button class="nav-btn" data-tab="candidatures"><span class="nav-icon">📋</span>Candidatures</button>
+    <button class="nav-btn" data-tab="relances"><span class="nav-icon">🔔</span>Relances</button>
+    <button class="nav-btn" data-tab="entretiens"><span class="nav-icon">🎯</span>Entretiens</button>
+    <button class="nav-btn" data-tab="export"><span class="nav-icon">📤</span>Export / Import</button>
   </nav>
 
-  <!-- MAIN -->
   <main class="main">
 
-    <!-- ═══════════════════════════════════════ DASHBOARD -->
+    <!-- DASHBOARD -->
     <section id="tab-dashboard" class="section active">
       <div class="stat-grid" id="stat-grid"></div>
       <div class="dash-grid">
         <div class="card">
-          <div class="card-title"><span class="card-title-icon">📈</span>Candidatures par statut</div>
+          <div class="card-title"><span>📈</span>Candidatures par statut</div>
           <div class="chart-rows" id="chart-statut"></div>
         </div>
         <div class="card">
-          <div class="card-title"><span class="card-title-icon">🕐</span>Activité récente</div>
+          <div class="card-title"><span>🕐</span>Activité récente</div>
           <div class="timeline" id="activite"></div>
         </div>
       </div>
       <div class="card" id="alerts-card" style="display:none">
-        <div class="card-title"><span class="card-title-icon">⚠️</span>Relances à prévoir</div>
+        <div class="card-title"><span>⚠️</span>Relances à prévoir</div>
         <div id="alerts-body"></div>
       </div>
     </section>
 
-    <!-- ═══════════════════════════════════════ CANDIDATURES -->
+    <!-- CANDIDATURES -->
     <section id="tab-candidatures" class="section">
       <div class="card">
-        <div class="card-title"><span class="card-title-icon">➕</span>Nouvelle candidature</div>
+        <div class="card-title"><span>➕</span>Nouvelle candidature</div>
         <div class="form-grid">
           <div class="field"><label>Entreprise *</label><input id="c-ent" placeholder="ex : Point P"></div>
           <div class="field"><label>Poste *</label><input id="c-post" placeholder="ex : Comptable fournisseurs"></div>
@@ -568,7 +253,6 @@
         </div>
         <button class="btn btn-primary" onclick="addCandidature()">✚ Ajouter la candidature</button>
       </div>
-
       <div class="card">
         <div class="toolbar">
           <div class="toolbar-left">
@@ -587,23 +271,21 @@
         </div>
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr>
-                <th>Entreprise</th><th>Poste</th><th>Ville</th>
-                <th>Date</th><th>Contrat</th><th>Statut</th>
-                <th>Source</th><th>Notes</th><th></th>
-              </tr>
-            </thead>
+            <thead><tr>
+              <th>Entreprise</th><th>Poste</th><th>Ville</th>
+              <th>Date</th><th>Contrat</th><th>Statut</th>
+              <th>Source</th><th>Notes</th><th></th>
+            </tr></thead>
             <tbody id="tbody-c"></tbody>
           </table>
         </div>
       </div>
     </section>
 
-    <!-- ═══════════════════════════════════════ RELANCES -->
+    <!-- RELANCES -->
     <section id="tab-relances" class="section">
       <div class="card">
-        <div class="card-title"><span class="card-title-icon">🔔</span>Enregistrer une relance</div>
+        <div class="card-title"><span>🔔</span>Enregistrer une relance</div>
         <div class="form-grid">
           <div class="field" style="grid-column:span 2">
             <label>Candidature concernée *</label>
@@ -622,24 +304,21 @@
         </div>
         <button class="btn btn-primary" onclick="addRelance()">🔔 Enregistrer</button>
       </div>
-
       <div class="card">
-        <div class="card-title"><span class="card-title-icon">📜</span>Historique des relances</div>
+        <div class="card-title"><span>📜</span>Historique des relances</div>
         <div class="table-wrap">
           <table>
-            <thead><tr>
-              <th>Entreprise / Poste</th><th>Date</th><th>Canal</th><th>Notes</th><th></th>
-            </tr></thead>
+            <thead><tr><th>Entreprise / Poste</th><th>Date</th><th>Canal</th><th>Notes</th><th></th></tr></thead>
             <tbody id="tbody-r"></tbody>
           </table>
         </div>
       </div>
     </section>
 
-    <!-- ═══════════════════════════════════════ ENTRETIENS -->
+    <!-- ENTRETIENS -->
     <section id="tab-entretiens" class="section">
       <div class="card">
-        <div class="card-title"><span class="card-title-icon">🎯</span>Planifier un entretien</div>
+        <div class="card-title"><span>🎯</span>Planifier un entretien</div>
         <div class="form-grid">
           <div class="field" style="grid-column:span 2">
             <label>Candidature concernée *</label>
@@ -651,9 +330,7 @@
               <option>Téléphonique</option><option>Visioconférence</option><option>Présentiel</option>
             </select>
           </div>
-          <div class="field"><label>Interlocuteur</label>
-            <input id="e-inter" placeholder="Nom, poste...">
-          </div>
+          <div class="field"><label>Interlocuteur</label><input id="e-inter" placeholder="Nom, poste..."></div>
           <div class="field"><label>Résultat</label>
             <select id="e-res">
               <option value="">En attente</option>
@@ -668,9 +345,8 @@
         </div>
         <button class="btn btn-primary" onclick="addEntretien()">🎯 Enregistrer l'entretien</button>
       </div>
-
       <div class="card">
-        <div class="card-title"><span class="card-title-icon">📅</span>Mes entretiens</div>
+        <div class="card-title"><span>📅</span>Mes entretiens</div>
         <div class="table-wrap">
           <table>
             <thead><tr>
@@ -683,35 +359,34 @@
       </div>
     </section>
 
-    <!-- ═══════════════════════════════════════ EXPORT -->
+    <!-- EXPORT -->
     <section id="tab-export" class="section">
       <div class="card">
-        <div class="card-title"><span class="card-title-icon">📤</span>Exporter mes données</div>
+        <div class="card-title"><span>📤</span>Exporter mes données</div>
         <div class="export-grid">
           <div class="export-tile">
             <div class="export-icon">📄</div>
             <div class="export-title">Export JSON</div>
-            <div class="export-desc">Toutes vos données (candidatures, relances, entretiens) en format structuré, réutilisable pour restauration ou intégration.</div>
+            <div class="export-desc">Toutes vos données en format structuré, réutilisable pour restauration ou intégration.</div>
             <button class="btn btn-primary" onclick="exportJSON()">⬇ Télécharger JSON</button>
           </div>
           <div class="export-tile">
             <div class="export-icon">📊</div>
-            <div class="export-title">Export Excel (CSV)</div>
-            <div class="export-desc">Vos candidatures en tableau CSV avec accents préservés, compatible Excel, LibreOffice et Google Sheets.</div>
+            <div class="export-title">Export CSV</div>
+            <div class="export-desc">Vos candidatures en tableau CSV, compatible Excel, LibreOffice et Google Sheets.</div>
             <button class="btn btn-primary" onclick="exportCSV()">⬇ Télécharger CSV</button>
           </div>
         </div>
       </div>
       <div class="card">
-        <div class="card-title"><span class="card-title-icon">📥</span>Importer des données</div>
-        <p style="font-size:13px;color:var(--txt2);margin-bottom:12px">Fusionne un fichier JSON exporté avec vos données existantes (les doublons de candidatures sont ignorés).</p>
-        <input type="file" id="import-file" accept=".json"
-               style="font-size:13px;color:var(--txt2);margin-bottom:10px;display:block">
+        <div class="card-title"><span>📥</span>Importer des données</div>
+        <p style="font-size:13px;color:var(--txt2);margin-bottom:12px">Fusionne un fichier JSON avec vos données existantes (doublons ignorés).</p>
+        <input type="file" id="import-file" accept=".json" style="font-size:13px;color:var(--txt2);margin-bottom:10px;display:block">
         <button class="btn btn-ghost" onclick="importJSON()">↑ Importer le fichier JSON</button>
       </div>
       <div class="card">
-        <div class="card-title"><span class="card-title-icon">🗑</span>Réinitialiser</div>
-        <p style="font-size:13px;color:var(--txt2);margin-bottom:12px">Supprime définitivement toutes les données locales. Pensez à exporter avant.</p>
+        <div class="card-title"><span>🗑</span>Réinitialiser</div>
+        <p style="font-size:13px;color:var(--txt2);margin-bottom:12px">Supprime définitivement toutes les données. Pensez à exporter avant.</p>
         <button class="btn btn-danger btn-sm" onclick="resetAll()">Tout supprimer</button>
       </div>
     </section>
@@ -719,502 +394,399 @@
   </main>
 </div>
 
-<!-- TOAST -->
 <div id="toast"></div>
 
-<!-- ═══════════════════════════════════════════════ SCRIPT -->
-<script>
-/* ── DATA ── */
-let db = { candidatures: [], relances: [], entretiens: [] };
+<!-- FIREBASE SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import {
+  getFirestore, collection, doc,
+  setDoc, deleteDoc, onSnapshot, writeBatch
+} from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
-const STATUTS = {
-  candidature: 'Envoyée',
-  relance:     'Relancé',
-  entretien:   'Entretien',
-  offre:       'Offre reçue',
-  refus:       'Refus',
-  archive:     'Archivé'
+/* ═══════════════════════════════════════
+   ⚙️  COLLE TA CONFIG FIREBASE ICI
+   ═══════════════════════════════════════ */
+const firebaseConfig = {
+  apiKey:            "AIzaSyAi4WQbtYad4mp4RCyrWhcL2plgN3rq3XU",
+  authDomain:        "job-tracker-johanna.firebaseapp.com",
+  projectId:         "job-tracker-johanna",
+  storageBucket:     "job-tracker-johanna.firebasestorage.app",
+  messagingSenderId: "8722995367",
+  appId:             "1:8722995367:web:7776920f470715171fa382",
+  measurementId:     "G-R1ZDKR1S5M"
 };
-const STATUT_CSS = {
-  candidature: 'b-candidature',
-  relance:     'b-relance',
-  entretien:   'b-entretien',
-  offre:       'b-offre',
-  refus:       'b-refus',
-  archive:     'b-archive'
-};
-const CHART_COLORS = {
-  candidature: '#2b72c8',
-  relance:     '#7c4db5',
-  entretien:   '#16a06a',
-  offre:       '#c47f0a',
-  refus:       '#c0392b',
-  archive:     '#9aa0b8'
+/* ═══════════════════════════════════════ */
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// Collections Firestore
+const COLS = {
+  candidatures: collection(db, 'candidatures'),
+  relances:     collection(db, 'relances'),
+  entretiens:   collection(db, 'entretiens')
 };
 
-/* ── STORAGE ── */
-function persist() {
-  try { localStorage.setItem('jt-johanna', JSON.stringify(db)); } catch(e) {}
-}
-function hydrate() {
-  try {
-    const s = localStorage.getItem('jt-johanna');
-    if (s) db = JSON.parse(s);
-  } catch(e) {}
-}
+// État local (miroir du Firestore)
+let state = { candidatures: [], relances: [], entretiens: [] };
 
-/* ── UTILS ── */
+// ── CONSTANTES ──
+const STATUTS = { candidature:'Envoyée', relance:'Relancé', entretien:'Entretien', offre:'Offre reçue', refus:'Refus', archive:'Archivé' };
+const CHART_COLORS = { candidature:'#2b72c8', relance:'#7c4db5', entretien:'#16a06a', offre:'#c47f0a', refus:'#c0392b', archive:'#9aa0b8' };
+
+// ── UTILS ──
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
-function today() { return new Date().toISOString().slice(0, 10); }
-function esc(s) {
-  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-function fmtDate(d) {
-  if (!d) return '—';
-  try { return new Date(d + 'T00:00:00').toLocaleDateString('fr-FR'); }
-  catch(e) { return d; }
-}
-function fmtDateTime(d) {
-  if (!d) return '—';
-  try {
-    return new Date(d).toLocaleString('fr-FR', {
-      day:'2-digit', month:'2-digit', year:'numeric',
-      hour:'2-digit', minute:'2-digit'
-    });
-  } catch(e) { return d; }
-}
+function today() { return new Date().toISOString().slice(0,10); }
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtDate(d) { if(!d) return '—'; try{return new Date(d+'T00:00:00').toLocaleDateString('fr-FR');}catch(e){return d;} }
+function fmtDateTime(d) { if(!d) return '—'; try{return new Date(d).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});}catch(e){return d;} }
 
-/* ── TOAST ── */
-function toast(msg, type = 'ok') {
+// ── TOAST ──
+function toast(msg, type='ok') {
   const el = document.getElementById('toast');
   el.textContent = msg;
-  el.className = type === 'err' ? 'error show' : 'show';
+  el.className = type==='err' ? 'error show' : 'show';
   clearTimeout(el._t);
-  el._t = setTimeout(() => el.classList.remove('show'), 2600);
+  el._t = setTimeout(()=>el.classList.remove('show'), 2600);
 }
 
-/* ── NAVIGATION ── */
+// ── SYNC BANNER ──
+function setBanner(msg, type='ok') {
+  const b = document.getElementById('sync-banner');
+  b.textContent = (type==='ok'?'☁️ ':type==='error'?'❌ ':'⏳ ') + msg;
+  b.className = type==='error' ? 'error' : type==='loading' ? 'loading' : '';
+}
+
+// ── FIRESTORE LISTENERS (temps réel) ──
+let listenersReady = 0;
+function checkReady() {
+  listenersReady++;
+  if (listenersReady >= 3) {
+    setBanner('Données synchronisées — modifications sauvegardées automatiquement', 'ok');
+    renderAll();
+  }
+}
+
+onSnapshot(COLS.candidatures, snap => {
+  state.candidatures = snap.docs.map(d => ({id:d.id,...d.data()}));
+  checkReady();
+  renderCandidatures();
+  renderDashboard();
+}, err => setBanner('Erreur de connexion Firebase', 'error'));
+
+onSnapshot(COLS.relances, snap => {
+  state.relances = snap.docs.map(d => ({id:d.id,...d.data()}));
+  checkReady();
+  renderRelances();
+  renderDashboard();
+}, err => setBanner('Erreur de connexion Firebase', 'error'));
+
+onSnapshot(COLS.entretiens, snap => {
+  state.entretiens = snap.docs.map(d => ({id:d.id,...d.data()}));
+  checkReady();
+  renderEntretiens();
+  renderDashboard();
+}, err => setBanner('Erreur de connexion Firebase', 'error'));
+
+function renderAll() {
+  renderDashboard();
+  renderCandidatures();
+  renderRelances();
+  renderEntretiens();
+}
+
+// ── NAVIGATION ──
 document.querySelectorAll('.nav-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
     btn.classList.add('active');
     const tab = btn.dataset.tab;
-    document.getElementById('tab-' + tab).classList.add('active');
-    if (tab === 'dashboard')    renderDashboard();
-    if (tab === 'candidatures') renderCandidatures();
-    if (tab === 'relances')     { populateSelects(); renderRelances(); }
-    if (tab === 'entretiens')   { populateSelects(); renderEntretiens(); }
+    document.getElementById('tab-'+tab).classList.add('active');
+    if (tab==='relances'||tab==='entretiens') populateSelects();
   });
 });
 
-/* ── CANDIDATURES ── */
-function addCandidature() {
+// ── CANDIDATURES ──
+window.addCandidature = async function() {
   const g = id => document.getElementById(id).value.trim();
-  if (!g('c-ent') || !g('c-post')) { toast('Entreprise et poste requis', 'err'); return; }
-  db.candidatures.push({
-    id:         uid(),
-    entreprise: g('c-ent'),
-    poste:      g('c-post'),
-    ville:      g('c-ville'),
-    date:       document.getElementById('c-date').value || today(),
-    contrat:    g('c-contrat'),
-    statut:     document.getElementById('c-statut').value,
-    source:     g('c-source'),
-    notes:      g('c-notes'),
-    createdAt:  new Date().toISOString()
-  });
-  ['c-ent','c-post','c-ville','c-notes'].forEach(i => document.getElementById(i).value = '');
-  persist();
-  renderCandidatures();
-  renderDashboard();
-  toast('✓ Candidature ajoutée');
-}
+  if (!g('c-ent')||!g('c-post')) { toast('Entreprise et poste requis','err'); return; }
+  const id = uid();
+  const data = {
+    entreprise: g('c-ent'), poste: g('c-post'), ville: g('c-ville'),
+    date: document.getElementById('c-date').value || today(),
+    contrat: g('c-contrat'), statut: document.getElementById('c-statut').value,
+    source: g('c-source'), notes: g('c-notes'),
+    createdAt: new Date().toISOString()
+  };
+  try {
+    await setDoc(doc(COLS.candidatures, id), data);
+    ['c-ent','c-post','c-ville','c-notes'].forEach(i=>document.getElementById(i).value='');
+    toast('✓ Candidature ajoutée');
+  } catch(e) { toast('Erreur sauvegarde','err'); }
+};
 
-function setStatut(id, val) {
-  const c = db.candidatures.find(x => x.id === id);
-  if (c) { c.statut = val; persist(); renderCandidatures(); renderDashboard(); }
-}
+window.setStatut = async function(id, val) {
+  try {
+    await setDoc(doc(COLS.candidatures, id), {statut:val}, {merge:true});
+  } catch(e) { toast('Erreur mise à jour','err'); }
+};
 
-function delCandidature(id) {
+window.delCandidature = async function(id) {
   if (!confirm('Supprimer cette candidature et ses relances/entretiens liés ?')) return;
-  db.candidatures = db.candidatures.filter(x => x.id !== id);
-  db.relances      = db.relances.filter(x => x.candidatureId !== id);
-  db.entretiens    = db.entretiens.filter(x => x.candidatureId !== id);
-  persist();
-  renderCandidatures();
-  renderDashboard();
-  toast('Supprimé');
-}
+  try {
+    const batch = writeBatch(db);
+    batch.delete(doc(COLS.candidatures, id));
+    state.relances.filter(r=>r.candidatureId===id).forEach(r=>batch.delete(doc(COLS.relances,r.id)));
+    state.entretiens.filter(e=>e.candidatureId===id).forEach(e=>batch.delete(doc(COLS.entretiens,e.id)));
+    await batch.commit();
+    toast('Supprimé');
+  } catch(e) { toast('Erreur suppression','err'); }
+};
 
 function renderCandidatures() {
-  const q   = (document.getElementById('search-c')?.value || '').toLowerCase();
-  const fil = document.getElementById('filter-statut')?.value || '';
-  let list  = db.candidatures
+  const q   = (document.getElementById('search-c')?.value||'').toLowerCase();
+  const fil = document.getElementById('filter-statut')?.value||'';
+  let list  = state.candidatures
     .filter(c => {
-      const txt = (c.entreprise + c.poste + c.ville + c.notes).toLowerCase();
-      return (!q || txt.includes(q)) && (!fil || c.statut === fil);
+      const txt=(c.entreprise+c.poste+c.ville+c.notes).toLowerCase();
+      return (!q||txt.includes(q))&&(!fil||c.statut===fil);
     })
-    .sort((a, b) => b.date.localeCompare(a.date));
+    .sort((a,b)=>b.date.localeCompare(a.date));
 
-  const cnt = document.getElementById('count-c');
-  if (cnt) cnt.textContent = list.length + ' résultat' + (list.length > 1 ? 's' : '');
+  const cnt=document.getElementById('count-c');
+  if(cnt) cnt.textContent=list.length+' résultat'+(list.length>1?'s':'');
 
-  const tbody = document.getElementById('tbody-c');
-  if (!tbody) return;
+  const tbody=document.getElementById('tbody-c');
+  if(!tbody) return;
+  if(!list.length){tbody.innerHTML=`<tr><td colspan="9"><div class="empty"><div class="empty-emoji">📭</div><div class="empty-txt">Aucune candidature enregistrée</div></div></td></tr>`;return;}
 
-  if (!list.length) {
-    tbody.innerHTML = `<tr><td colspan="9"><div class="empty">
-      <div class="empty-emoji">📭</div>
-      <div class="empty-txt">Aucune candidature enregistrée</div>
-    </div></td></tr>`;
-    return;
-  }
-
-  tbody.innerHTML = list.map(c => {
-    const opts = Object.entries(STATUTS).map(([k, v]) =>
-      `<option value="${k}"${c.statut === k ? ' selected' : ''}>${v}</option>`
-    ).join('');
-    const css = STATUT_CSS[c.statut] || '';
-    const col = {
-      candidature: '#2b72c8', relance: '#7c4db5', entretien: '#16a06a',
-      offre: '#c47f0a', refus: '#c0392b', archive: '#9aa0b8'
-    };
-    const bg  = col[c.statut] + '22' || 'rgba(255,255,255,0.08)';
-    const fg  = col[c.statut] || '#8890aa';
+  const col={candidature:'#2b72c8',relance:'#7c4db5',entretien:'#16a06a',offre:'#c47f0a',refus:'#c0392b',archive:'#9aa0b8'};
+  tbody.innerHTML=list.map(c=>{
+    const opts=Object.entries(STATUTS).map(([k,v])=>`<option value="${k}"${c.statut===k?' selected':''}>${v}</option>`).join('');
+    const bg=(col[c.statut]||'#888')+'22', fg=col[c.statut]||'#888';
     return `<tr>
-      <td><strong style="font-size:13px">${esc(c.entreprise)}</strong></td>
+      <td><strong>${esc(c.entreprise)}</strong></td>
       <td>${esc(c.poste)}</td>
       <td style="color:var(--txt2)">${esc(c.ville)}</td>
       <td style="color:var(--txt2);white-space:nowrap">${fmtDate(c.date)}</td>
       <td style="color:var(--txt2)">${esc(c.contrat)}</td>
-      <td>
-        <select class="statut-select"
-          style="background:${bg};color:${fg}"
-          onchange="setStatut('${c.id}', this.value)">
-          ${opts}
-        </select>
-      </td>
+      <td><select class="statut-select" style="background:${bg};color:${fg}" onchange="setStatut('${c.id}',this.value)">${opts}</select></td>
       <td style="color:var(--txt2)">${esc(c.source)}</td>
-      <td style="color:var(--txt2);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
-          title="${esc(c.notes)}">${esc(c.notes)}</td>
-      <td>
-        <button class="btn-icon" onclick="delCandidature('${c.id}')" title="Supprimer">🗑</button>
-      </td>
+      <td style="color:var(--txt2);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(c.notes)}">${esc(c.notes)}</td>
+      <td><button class="btn-icon" onclick="delCandidature('${c.id}')">🗑</button></td>
     </tr>`;
   }).join('');
 }
 
-/* ── SELECTS (relances + entretiens) ── */
+// ── SELECTS ──
 function populateSelects() {
-  const opts = db.candidatures.map(c =>
-    `<option value="${c.id}">${esc(c.entreprise)} — ${esc(c.poste)}</option>`
-  ).join('');
-  const empty = '<option value="">— Choisir une candidature —</option>';
-  ['r-cand', 'e-cand'].forEach(id => {
-    const s = document.getElementById(id);
-    if (s) s.innerHTML = empty + opts;
-  });
+  const opts=state.candidatures.map(c=>`<option value="${c.id}">${esc(c.entreprise)} — ${esc(c.poste)}</option>`).join('');
+  const empty='<option value="">— Choisir une candidature —</option>';
+  ['r-cand','e-cand'].forEach(id=>{const s=document.getElementById(id);if(s)s.innerHTML=empty+opts;});
 }
 
-/* ── RELANCES ── */
-function addRelance() {
-  const cid = document.getElementById('r-cand').value;
-  if (!cid) { toast('Sélectionnez une candidature', 'err'); return; }
-  db.relances.push({
-    id:            uid(),
-    candidatureId: cid,
-    date:          document.getElementById('r-date').value || today(),
-    canal:         document.getElementById('r-canal').value,
-    notes:         document.getElementById('r-notes').value.trim(),
-    createdAt:     new Date().toISOString()
-  });
-  const c = db.candidatures.find(x => x.id === cid);
-  if (c && c.statut === 'candidature') c.statut = 'relance';
-  document.getElementById('r-notes').value = '';
-  persist();
-  renderRelances();
-  renderDashboard();
-  toast('✓ Relance enregistrée');
-}
+// ── RELANCES ──
+window.addRelance = async function() {
+  const cid=document.getElementById('r-cand').value;
+  if(!cid){toast('Sélectionnez une candidature','err');return;}
+  const id=uid();
+  const data={
+    candidatureId:cid,
+    date:document.getElementById('r-date').value||today(),
+    canal:document.getElementById('r-canal').value,
+    notes:document.getElementById('r-notes').value.trim(),
+    createdAt:new Date().toISOString()
+  };
+  try {
+    const batch=writeBatch(db);
+    batch.set(doc(COLS.relances,id),data);
+    const c=state.candidatures.find(x=>x.id===cid);
+    if(c&&c.statut==='candidature') batch.set(doc(COLS.candidatures,cid),{statut:'relance'},{merge:true});
+    await batch.commit();
+    document.getElementById('r-notes').value='';
+    toast('✓ Relance enregistrée');
+  } catch(e){toast('Erreur sauvegarde','err');}
+};
 
-function delRelance(id) {
-  db.relances = db.relances.filter(x => x.id !== id);
-  persist(); renderRelances(); renderDashboard(); toast('Supprimé');
-}
+window.delRelance = async function(id) {
+  try{await deleteDoc(doc(COLS.relances,id));toast('Supprimé');}catch(e){toast('Erreur','err');}
+};
 
 function renderRelances() {
-  const tbody = document.getElementById('tbody-r');
-  if (!tbody) return;
-  const list = [...db.relances].sort((a, b) => b.date.localeCompare(a.date));
-  if (!list.length) {
-    tbody.innerHTML = `<tr><td colspan="5"><div class="empty">
-      <div class="empty-emoji">🔕</div>
-      <div class="empty-txt">Aucune relance enregistrée</div>
-    </div></td></tr>`;
-    return;
-  }
-  tbody.innerHTML = list.map(r => {
-    const c = db.candidatures.find(x => x.id === r.candidatureId);
+  const tbody=document.getElementById('tbody-r');
+  if(!tbody)return;
+  const list=[...state.relances].sort((a,b)=>b.date.localeCompare(a.date));
+  if(!list.length){tbody.innerHTML=`<tr><td colspan="5"><div class="empty"><div class="empty-emoji">🔕</div><div class="empty-txt">Aucune relance enregistrée</div></div></td></tr>`;return;}
+  tbody.innerHTML=list.map(r=>{
+    const c=state.candidatures.find(x=>x.id===r.candidatureId);
     return `<tr>
-      <td>
-        <strong>${esc(c?.entreprise || '?')}</strong>
-        <div style="font-size:12px;color:var(--txt2)">${esc(c?.poste || '')}</div>
-      </td>
+      <td><strong>${esc(c?.entreprise||'?')}</strong><div style="font-size:12px;color:var(--txt2)">${esc(c?.poste||'')}</div></td>
       <td style="white-space:nowrap;color:var(--txt2)">${fmtDate(r.date)}</td>
       <td><span class="badge b-relance">${esc(r.canal)}</span></td>
-      <td style="color:var(--txt2);max-width:220px">${esc(r.notes) || '—'}</td>
+      <td style="color:var(--txt2);max-width:220px">${esc(r.notes)||'—'}</td>
       <td><button class="btn-icon" onclick="delRelance('${r.id}')">🗑</button></td>
     </tr>`;
   }).join('');
 }
 
-/* ── ENTRETIENS ── */
-function addEntretien() {
-  const cid = document.getElementById('e-cand').value;
-  if (!cid) { toast('Sélectionnez une candidature', 'err'); return; }
-  db.entretiens.push({
-    id:            uid(),
-    candidatureId: cid,
-    date:          document.getElementById('e-date').value,
-    type:          document.getElementById('e-type').value,
-    interlocuteur: document.getElementById('e-inter').value.trim(),
-    resultat:      document.getElementById('e-res').value,
-    notes:         document.getElementById('e-notes').value.trim(),
-    createdAt:     new Date().toISOString()
-  });
-  const c = db.candidatures.find(x => x.id === cid);
-  if (c && ['candidature','relance'].includes(c.statut)) c.statut = 'entretien';
-  ['e-inter','e-notes'].forEach(i => document.getElementById(i).value = '');
-  persist();
-  renderEntretiens();
-  renderDashboard();
-  toast('✓ Entretien enregistré');
-}
+// ── ENTRETIENS ──
+window.addEntretien = async function() {
+  const cid=document.getElementById('e-cand').value;
+  if(!cid){toast('Sélectionnez une candidature','err');return;}
+  const id=uid();
+  const data={
+    candidatureId:cid,
+    date:document.getElementById('e-date').value,
+    type:document.getElementById('e-type').value,
+    interlocuteur:document.getElementById('e-inter').value.trim(),
+    resultat:document.getElementById('e-res').value,
+    notes:document.getElementById('e-notes').value.trim(),
+    createdAt:new Date().toISOString()
+  };
+  try {
+    const batch=writeBatch(db);
+    batch.set(doc(COLS.entretiens,id),data);
+    const c=state.candidatures.find(x=>x.id===cid);
+    if(c&&['candidature','relance'].includes(c.statut)) batch.set(doc(COLS.candidatures,cid),{statut:'entretien'},{merge:true});
+    await batch.commit();
+    ['e-inter','e-notes'].forEach(i=>document.getElementById(i).value='');
+    toast('✓ Entretien enregistré');
+  } catch(e){toast('Erreur sauvegarde','err');}
+};
 
-function delEntretien(id) {
-  db.entretiens = db.entretiens.filter(x => x.id !== id);
-  persist(); renderEntretiens(); renderDashboard(); toast('Supprimé');
-}
+window.delEntretien = async function(id) {
+  try{await deleteDoc(doc(COLS.entretiens,id));toast('Supprimé');}catch(e){toast('Erreur','err');}
+};
 
 function renderEntretiens() {
-  const tbody = document.getElementById('tbody-e');
-  if (!tbody) return;
-  const RES = { positif: '✅ Positif', negatif: '❌ Refus', attente: '⏳ En attente', '': '—' };
-  const list = [...db.entretiens].sort((a, b) => (b.date||'').localeCompare(a.date||''));
-  if (!list.length) {
-    tbody.innerHTML = `<tr><td colspan="7"><div class="empty">
-      <div class="empty-emoji">📅</div>
-      <div class="empty-txt">Aucun entretien enregistré</div>
-    </div></td></tr>`;
-    return;
-  }
-  tbody.innerHTML = list.map(e => {
-    const c = db.candidatures.find(x => x.id === e.candidatureId);
+  const tbody=document.getElementById('tbody-e');
+  if(!tbody)return;
+  const RES={positif:'✅ Positif',negatif:'❌ Refus',attente:'⏳ En attente','':'—'};
+  const list=[...state.entretiens].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  if(!list.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty"><div class="empty-emoji">📅</div><div class="empty-txt">Aucun entretien enregistré</div></div></td></tr>`;return;}
+  tbody.innerHTML=list.map(e=>{
+    const c=state.candidatures.find(x=>x.id===e.candidatureId);
     return `<tr>
-      <td>
-        <strong>${esc(c?.entreprise || '?')}</strong>
-        <div style="font-size:12px;color:var(--txt2)">${esc(c?.poste || '')}</div>
-      </td>
+      <td><strong>${esc(c?.entreprise||'?')}</strong><div style="font-size:12px;color:var(--txt2)">${esc(c?.poste||'')}</div></td>
       <td style="white-space:nowrap;color:var(--txt2)">${fmtDateTime(e.date)}</td>
       <td><span class="badge b-entretien">${esc(e.type)}</span></td>
-      <td style="color:var(--txt2)">${esc(e.interlocuteur) || '—'}</td>
-      <td>${RES[e.resultat] || '—'}</td>
-      <td style="color:var(--txt2);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
-          title="${esc(e.notes)}">${esc(e.notes) || '—'}</td>
+      <td style="color:var(--txt2)">${esc(e.interlocuteur)||'—'}</td>
+      <td>${RES[e.resultat]||'—'}</td>
+      <td style="color:var(--txt2);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(e.notes)}">${esc(e.notes)||'—'}</td>
       <td><button class="btn-icon" onclick="delEntretien('${e.id}')">🗑</button></td>
     </tr>`;
   }).join('');
 }
 
-/* ── DASHBOARD ── */
+// ── DASHBOARD ──
 function renderDashboard() {
-  const total = db.candidatures.length;
-  const nbEnt = db.candidatures.filter(c => ['entretien','offre'].includes(c.statut)).length;
-  const nbOff = db.candidatures.filter(c => c.statut === 'offre').length;
-  const nbRel = db.relances.length;
-  const taux  = total ? Math.round(nbEnt / total * 100) : 0;
+  const total=state.candidatures.length;
+  const nbEnt=state.candidatures.filter(c=>['entretien','offre'].includes(c.statut)).length;
+  const nbOff=state.candidatures.filter(c=>c.statut==='offre').length;
+  const nbRel=state.relances.length;
+  const taux=total?Math.round(nbEnt/total*100):0;
 
-  // header stats
-  document.getElementById('header-stats').innerHTML = `
+  document.getElementById('header-stats').innerHTML=`
     <div class="hs"><div class="hs-num">${total}</div><div class="hs-lbl">Candidatures</div></div>
     <div class="hs"><div class="hs-num" style="color:var(--green)">${nbEnt}</div><div class="hs-lbl">Entretiens</div></div>
-    <div class="hs"><div class="hs-num" style="color:var(--amber)">${nbOff}</div><div class="hs-lbl">Offres</div></div>
-  `;
+    <div class="hs"><div class="hs-num" style="color:var(--amber)">${nbOff}</div><div class="hs-lbl">Offres</div></div>`;
 
-  // stat tiles
-  document.getElementById('stat-grid').innerHTML = `
-    <div class="stat-tile st-acc">
-      <div class="stat-tile-num">${total}</div>
-      <div class="stat-tile-lbl">Candidatures</div>
-    </div>
-    <div class="stat-tile st-blue">
-      <div class="stat-tile-num">${nbEnt}</div>
-      <div class="stat-tile-lbl">Entretiens obtenus</div>
-    </div>
-    <div class="stat-tile st-grn">
-      <div class="stat-tile-num">${nbOff}</div>
-      <div class="stat-tile-lbl">Offres reçues</div>
-    </div>
-    <div class="stat-tile st-amb">
-      <div class="stat-tile-num">${nbRel}</div>
-      <div class="stat-tile-lbl">Relances effectuées</div>
-    </div>
-    <div class="stat-tile st-pur">
-      <div class="stat-tile-num">${taux}%</div>
-      <div class="stat-tile-lbl">Taux d'entretiens</div>
-    </div>
-  `;
+  document.getElementById('stat-grid').innerHTML=`
+    <div class="stat-tile st-acc"><div class="stat-tile-num">${total}</div><div class="stat-tile-lbl">Candidatures</div></div>
+    <div class="stat-tile st-blue"><div class="stat-tile-num">${nbEnt}</div><div class="stat-tile-lbl">Entretiens obtenus</div></div>
+    <div class="stat-tile st-grn"><div class="stat-tile-num">${nbOff}</div><div class="stat-tile-lbl">Offres reçues</div></div>
+    <div class="stat-tile st-amb"><div class="stat-tile-num">${nbRel}</div><div class="stat-tile-lbl">Relances effectuées</div></div>
+    <div class="stat-tile st-pur"><div class="stat-tile-num">${taux}%</div><div class="stat-tile-lbl">Taux d'entretiens</div></div>`;
 
-  // chart
-  const counts = {};
-  Object.keys(STATUTS).forEach(k => counts[k] = 0);
-  db.candidatures.forEach(c => { counts[c.statut] = (counts[c.statut] || 0) + 1; });
-  const maxC = Math.max(...Object.values(counts), 1);
-  document.getElementById('chart-statut').innerHTML = Object.entries(STATUTS).map(([k, v]) => `
+  const counts={};
+  Object.keys(STATUTS).forEach(k=>counts[k]=0);
+  state.candidatures.forEach(c=>{counts[c.statut]=(counts[c.statut]||0)+1;});
+  const maxC=Math.max(...Object.values(counts),1);
+  document.getElementById('chart-statut').innerHTML=Object.entries(STATUTS).map(([k,v])=>`
     <div class="chart-row">
       <span class="chart-lbl">${v}</span>
       <div class="chart-track">
-        <div class="chart-fill"
-             style="width:${Math.round(counts[k] / maxC * 100)}%;background:${CHART_COLORS[k]}">
-          ${counts[k] ? `<span>${counts[k]}</span>` : ''}
+        <div class="chart-fill" style="width:${Math.round(counts[k]/maxC*100)}%;background:${CHART_COLORS[k]}">
+          ${counts[k]?`<span>${counts[k]}</span>`:''}
         </div>
       </div>
     </div>`).join('');
 
-  // activité récente
-  const events = [
-    ...db.candidatures.slice().reverse().slice(0, 5).map(c => ({
-      date: c.date, icon: '📋',
-      txt: `<strong>${esc(c.entreprise)}</strong> — ${esc(c.poste)}`
-    })),
-    ...db.relances.slice().reverse().slice(0, 3).map(r => {
-      const c = db.candidatures.find(x => x.id === r.candidatureId);
-      return { date: r.date, icon: '🔔', txt: `Relance ${esc(c?.entreprise || '?')}` };
-    }),
-    ...db.entretiens.slice().reverse().slice(0, 3).map(e => {
-      const c = db.candidatures.find(x => x.id === e.candidatureId);
-      return { date: (e.date || '').slice(0, 10), icon: '🎯', txt: `Entretien ${esc(c?.entreprise || '?')}` };
-    })
-  ].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8);
+  const events=[
+    ...state.candidatures.slice().reverse().slice(0,5).map(c=>({date:c.date,icon:'📋',txt:`<strong>${esc(c.entreprise)}</strong> — ${esc(c.poste)}`})),
+    ...state.relances.slice().reverse().slice(0,3).map(r=>{const c=state.candidatures.find(x=>x.id===r.candidatureId);return{date:r.date,icon:'🔔',txt:`Relance ${esc(c?.entreprise||'?')}`};}),
+    ...state.entretiens.slice().reverse().slice(0,3).map(e=>{const c=state.candidatures.find(x=>x.id===e.candidatureId);return{date:(e.date||'').slice(0,10),icon:'🎯',txt:`Entretien ${esc(c?.entreprise||'?')}`};})
+  ].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
 
-  document.getElementById('activite').innerHTML = events.length
-    ? events.map(ev => `
-        <div class="tl-item">
-          <div class="tl-dot">${ev.icon}</div>
-          <div class="tl-body">
-            <div class="tl-text">${ev.txt}</div>
-            <div class="tl-date">${fmtDate(ev.date)}</div>
-          </div>
-        </div>`).join('')
-    : `<div class="empty" style="padding:20px">
-        <div class="empty-emoji">🌱</div>
-        <div class="empty-txt">Ajoutez votre première candidature</div>
-       </div>`;
+  document.getElementById('activite').innerHTML=events.length
+    ?events.map(ev=>`<div class="tl-item"><div class="tl-dot">${ev.icon}</div><div class="tl-body"><div class="tl-text">${ev.txt}</div><div class="tl-date">${fmtDate(ev.date)}</div></div></div>`).join('')
+    :`<div class="empty" style="padding:20px"><div class="empty-emoji">🌱</div><div class="empty-txt">Ajoutez votre première candidature</div></div>`;
 
-  // alertes relances
-  const threshold = new Date();
-  threshold.setDate(threshold.getDate() - 7);
-  const urgents = db.candidatures.filter(c =>
-    c.statut === 'candidature' && new Date(c.date) < threshold
-  );
-  const alertCard = document.getElementById('alerts-card');
-  alertCard.style.display = urgents.length ? 'block' : 'none';
-  document.getElementById('alerts-body').innerHTML = urgents.slice(0, 5).map(c => `
-    <div class="alert-row">
-      ⏰ <strong>${esc(c.entreprise)}</strong> — ${esc(c.poste)}
+  const threshold=new Date();
+  threshold.setDate(threshold.getDate()-7);
+  const urgents=state.candidatures.filter(c=>c.statut==='candidature'&&new Date(c.date)<threshold);
+  document.getElementById('alerts-card').style.display=urgents.length?'block':'none';
+  document.getElementById('alerts-body').innerHTML=urgents.slice(0,5).map(c=>`
+    <div class="alert-row">⏰ <strong>${esc(c.entreprise)}</strong> — ${esc(c.poste)}
       <span style="margin-left:auto;font-size:11px;opacity:.7">candidature du ${fmtDate(c.date)}</span>
     </div>`).join('');
 }
 
-/* ── EXPORT ── */
-function exportJSON() {
-  dl(
-    new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' }),
-    'job-tracker-johanna.json'
-  );
+// ── EXPORT ──
+function dl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
+
+window.exportJSON = function() {
+  dl(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),'job-tracker-johanna.json');
   toast('✓ Export JSON téléchargé');
-}
+};
 
-function exportCSV() {
-  const rows = [
+window.exportCSV = function() {
+  const rows=[
     ['Entreprise','Poste','Ville','Date','Contrat','Statut','Source','Notes'],
-    ...db.candidatures.map(c => [
-      c.entreprise, c.poste, c.ville, c.date,
-      c.contrat, STATUTS[c.statut] || c.statut, c.source, c.notes
-    ])
+    ...state.candidatures.map(c=>[c.entreprise,c.poste,c.ville,c.date,c.contrat,STATUTS[c.statut]||c.statut,c.source,c.notes])
   ];
-  const csv = rows
-    .map(r => r.map(v => `"${(v||'').replace(/"/g,'""')}"`).join(','))
-    .join('\r\n');
-  dl(new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' }), 'job-tracker-johanna.csv');
+  const csv=rows.map(r=>r.map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  dl(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'}),'job-tracker-johanna.csv');
   toast('✓ Export CSV téléchargé');
-}
+};
 
-function dl(blob, name) {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = name;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-}
-
-function importJSON() {
-  const f = document.getElementById('import-file').files[0];
-  if (!f) { toast('Sélectionnez un fichier JSON', 'err'); return; }
-  const reader = new FileReader();
-  reader.onload = e => {
+window.importJSON = async function() {
+  const f=document.getElementById('import-file').files[0];
+  if(!f){toast('Sélectionnez un fichier JSON','err');return;}
+  const reader=new FileReader();
+  reader.onload=async e=>{
     try {
-      const imported = JSON.parse(e.target.result);
-      const ids = new Set(
-        db.candidatures.map(c => c.id)
-      );
-      (imported.candidatures || []).forEach(c => {
-        if (!ids.has(c.id)) {
-          db.candidatures.push(c);
-        }
-      });
-      (imported.relances || []).forEach(r => {
-        db.relances.push(r);
-      });
-      (imported.entretiens || []).forEach(ent => {
-        db.entretiens.push(ent);
-      });
-      persist();
-      renderDashboard();
-      renderCandidatures();
-      renderRelances();
-      renderEntretiens();
-      toast('✓ Données ajoutées');
-    } catch(err) {
-      toast('Fichier JSON invalide', 'err');
-    }
+      const imported=JSON.parse(e.target.result);
+      const batch=writeBatch(db);
+      const existingIds=new Set(state.candidatures.map(c=>c.id));
+      (imported.candidatures||[]).forEach(c=>{if(!existingIds.has(c.id)){const{id,...data}=c;batch.set(doc(COLS.candidatures,id),data);}});
+      (imported.relances||[]).forEach(r=>{const{id,...data}=r;batch.set(doc(COLS.relances,id),data);});
+      (imported.entretiens||[]).forEach(e=>{const{id,...data}=e;batch.set(doc(COLS.entretiens,id),data);});
+      await batch.commit();
+      toast('✓ Données importées dans Firebase');
+    } catch(err){toast('Fichier JSON invalide','err');}
   };
   reader.readAsText(f);
-}
+};
 
-function resetAll() {
-  if (!confirm('Supprimer TOUTES les données ? Cette action est irréversible.\nPensez à exporter un backup d\'abord.')) return;
-  db = { candidatures: [], relances: [], entretiens: [] };
-  persist();
-  renderDashboard();
-  toast('Données réinitialisées');
-}
+window.resetAll = async function() {
+  if(!confirm('Supprimer TOUTES les données Firebase ? Cette action est irréversible.')) return;
+  try {
+    const batch=writeBatch(db);
+    state.candidatures.forEach(c=>batch.delete(doc(COLS.candidatures,c.id)));
+    state.relances.forEach(r=>batch.delete(doc(COLS.relances,r.id)));
+    state.entretiens.forEach(e=>batch.delete(doc(COLS.entretiens,e.id)));
+    await batch.commit();
+    toast('Données réinitialisées');
+  } catch(err){toast('Erreur suppression','err');}
+};
 
-/* ── INIT ── */
-hydrate();
-document.getElementById('c-date').value = today();
-document.getElementById('r-date').value = today();
-renderDashboard();
+// ── INIT ──
+document.getElementById('c-date').value=today();
+document.getElementById('r-date').value=today();
 
-/* ── SERVICE WORKER ── */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('SW enregistré :', reg.scope))
-      .catch(err => console.warn('SW échec :', err));
-  });
-}
 </script>
 </body>
 </html>
